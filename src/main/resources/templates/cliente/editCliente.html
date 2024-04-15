@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Cliente</title>
+    <link rel="stylesheet" th:href="@{/css/crearClientes.css}">
+
+</head>
+<body>
+    <div th:replace="~{nav/nav-bar.html}"></div>
+
+    <h1>Editar Cliente</h1>
+    <form id="clienteForm" method="post">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" th:value="${cliente.nombre}">  <br><br>
+        
+        <label for="nit">NIT:</label>
+        <input type="text" id="nit" name="nit" th:value="${cliente.nit}"><br><br>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" th:value="${cliente.email}"><br><br>
+          <!-- Agregar un campo oculto para el ID del cliente -->
+          <input type="hidden" id="clienteId" name="clienteId" th:value="${cliente.id}">
+        
+    
+        <button type="button" onclick="actualizarCliente()">Actualizar Cliente</button>
+    </form>
+
+    <script>
+        function actualizarCliente() {
+            var id = document.getElementById('clienteId').value;
+            var nombre = document.getElementById('nombre').value;
+            var nit = document.getElementById('nit').value;
+            var email = document.getElementById('email').value;
+
+            var cliente = {
+                id: id,
+                nombre: nombre,
+                nit: nit,
+                email: email
+            };
+            console.log(cliente)
+            fetch('/cliente/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cliente)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Cliente actualizado exitosamente');
+                    window.location.href = '/cliente/all'; // Redirigir a la lista de clientes
+                } else {
+                    console.error('Error al guardar cliente');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+            });
+        }
+    </script>
+</body>
+</html>

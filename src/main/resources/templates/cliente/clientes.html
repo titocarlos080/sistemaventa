@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+ <head>
+    <meta charset="UTF-8">
+    <title>Lista de Clientes</title>
+    <link rel="stylesheet" th:href="@{/css/cliente.css}">
+
+</head>
+<body>
+    <div th:replace="~{nav/nav-bar.html}"></div>
+
+    <h1>Lista de Clientes</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nro</th>
+                <th>Nombre</th>
+                <th>NIT</th>
+                <th>Email</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <a href="/cliente/create"> NUEVO </a>
+        <tbody>
+          
+            <tr th:each="cliente,i: ${clientes}">
+                <td th:text="${i.index+1}"> </td>
+                <td th:text="${cliente.nombre}"></td>
+                <td th:text="${cliente.nit}"></td>
+                <td th:text="${cliente.email}"></td>
+                <td > <a th:href="@{'/cliente/edit/' + ${cliente.id}}">Editar</a>
+                <a th:href="@{'/cliente/delete/' + ${cliente.id}}">Eliminar</a>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

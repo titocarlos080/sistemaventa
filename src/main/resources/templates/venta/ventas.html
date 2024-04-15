@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Ventas</title>
+    <link rel="stylesheet" th:href="@{/css/ventas.css}">
+    <!-- CSS de Bootstrap -->
+
+</head>
+<body>
+    <div th:replace="~{nav/nav-bar.html}"></div>
+    <h1>Lista de Ventas</h1>
+    
+    <a href="/reportes/all" class="btn btn-primary">Reportes</a>
+    <a href="/venta/create" class="btn btn-primary">Nueva Venta</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Nro</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="venta, iterStat : ${ventas}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${#dates.format(venta.fecha, 'dd/MM/yyyy')}"></td>
+                <td th:text="${venta.cliente.nombre}"></td>
+                <td class="actions">
+                    <a th:href="@{'/venta/edit/' + ${venta.id}}">Editar</a>
+                    <a th:href="@{'/venta/delete/' + ${venta.id}}">Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <!-- Agregar sección para mostrar detalles de la venta -->
+    <h2>Detalles de Venta</h2>
+    <div th:each="venta : ${ventas}">
+        <h3>Venta #<span th:text="${venta.id}"></span></h3>
+        <p>Fecha: <span th:text="${#dates.format(venta.fecha, 'dd/MM/yyyy')}"></span></p>
+        <p>Cliente: <span th:text="${venta.cliente.nombre}"></span></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="detalle : ${venta.ventaProductos}">
+                    <td th:text="${detalle.producto.nombre}"></td>
+                    <td th:text="${detalle.cantidad}"></td>
+                    <td th:text="${detalle.precioUnitario}"></td>
+                    <td th:text="${detalle.cantidad * detalle.precioUnitario}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+ <head>
+    <meta charset="UTF-8">
+    <title>Sistema de Ventas - Inicio</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <!-- CSS de Bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{nav/nav-bar.html}"></div>
+
+    <h1>Bienvenido al Sistema de Ventas</h1>
+ 
+    <p>¡Gracias por visitar nuestro sistema de venta de productos! Aquí podrás encontrar una amplia variedad de productos para satisfacer tus necesidades.</p>
+    <p>Explora nuestro catálogo y encuentra los productos que estás buscando.</p>
+    <div class="links-conteiner">
+        <a href="/venta/all">Vender </a>
+        <a href="/producto/all">Productos </a>
+        <a href="/cliente/all">Clientes </a>
+       
+    </div>
+   
+</div>
+</body>
+</html>

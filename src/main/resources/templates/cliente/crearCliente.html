@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Cliente</title>
+    <link rel="stylesheet" th:href="@{/css/crearClientes.css}">
+
+</head>
+<body>
+    <div th:replace="~{nav/nav-bar.html}"></div>
+
+    <h1>Crear Nuevo Cliente</h1>
+    <form id="clienteForm" method="post">
+        <label for="nombre">Nombre:</label>
+        <input required type="text" id="nombre" name="nombre"><br><br>
+        
+        <label for="nit">NIT:</label>
+        <input required  type="text" id="nit" name="nit"><br><br>
+        
+        <label for="email">Email:</label>
+        <input required type="text" id="email" name="email"><br><br>
+        
+        <button type="button" onclick="guardarCliente()">Guardar Cliente</button>
+    </form>
+
+    <script>
+        function guardarCliente() {
+            var nombre = document.getElementById('nombre').value;
+            var nit = document.getElementById('nit').value;
+            var email = document.getElementById('email').value;
+
+            var cliente = {
+                nombre: nombre,
+                nit: nit,
+                email: email
+            };
+
+            fetch('/cliente/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cliente)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Cliente guardado exitosamente');
+                    window.location.href = '/cliente/all'; // Redirigir a la lista de clientes
+                } else {
+                    console.error('Error al guardar cliente');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+            });
+        }
+    </script>
+</body>
+</html>

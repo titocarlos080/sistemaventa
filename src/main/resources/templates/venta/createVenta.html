@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Venta</title>
+    <link rel="stylesheet" th:href="@{/css/crearVenta.css}">
+</head>
+<body>
+    <div th:replace="~{nav/nav-bar.html}"></div>
+    <div class="container">
+        <h1>Crear Nueva Venta</h1>
+        
+        <div id="ventaForm" method="post" action="/venta/add">
+            <div class="form-group">
+                <label for="cliente">Cliente:</label>
+                <select class="form-control" id="cliente" name="cliente">
+                    <option th:each="cliente : ${clientes}"
+                            th:value="${cliente.id}"
+                            th:text="${cliente.nombre}"></option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="productos">Productos:</label>
+                <select class="form-control" id="productos" name="productos" onchange="agregarProducto(this.value)">
+                    <option th:each="producto : ${productos}"
+                            th:value="${producto.id}"
+                            th:text="${producto.nombre} + ' - Precio: ' + ${producto.precio}"></option>
+                </select>
+            </div>
+            
+            <div id="detalleVentaDiv">
+                <h2>Detalle de Venta</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalleVentaBody">
+                        <!-- Aquí se agregarán los detalles de venta -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <button onclick="guardarVenta()" class="btn btn-primary">Crear Venta</button>
+        </div>
+    </div>
+    <script>
+        let detalleVenta = []; // Array para almacenar los detalles de venta
+
+        function agregarProducto(productoId) {
+            var productosSelect = document.getElementById('productos');
+            var producto_id=productoId
+            var productoIndex = productosSelect.selectedIndex;
+            var producto = productosSelect.options[productoIndex].text.split(' - Precio: ');
+            var precioUnitario = parseFloat(producto[1]);
+            var cantidad = parseInt(prompt('Ingrese la cantidad', '1'));
+
+
+            if (!isNaN(cantidad) && cantidad > 0) {
+                var subtotal = precioUnitario * cantidad;
+                detalleVenta.push({
+                    id_producto:productoId,
+                    producto: producto[0],
+                    cantidad: cantidad,
+                    precioUnitario: precioUnitario,
+                    subtotal:subtotal
+                });
+
+                // Actualizar la tabla de detalleVenta
+                actualizarTablaDetalleVenta();
+            } else {
+                alert('Cantidad no válida');
+            }
+        }
+
+        function actualizarTablaDetalleVenta() {
+            var detalleVentaBody = document.getElementById('detalleVentaBody');
+            detalleVentaBody.innerHTML = '';
+
+            detalleVenta.forEach(detalle => {
+                var row = `
+                    <tr>
+                        <td>${detalle.producto}</td>
+                        <td>${detalle.cantidad}</td>
+                        <td>${detalle.precioUnitario}</td>
+                        <td>${detalle.subtotal}</td>
+                        <td><button onclick="eliminarDetalle(${detalleVenta.indexOf(detalle)})">Eliminar</button></td>
+                    </tr>
+                `;
+                detalleVentaBody.innerHTML += row;
+            });
+        }
+
+        function eliminarDetalle(index) {
+            detalleVenta.splice(index, 1);
+            actualizarTablaDetalleVenta();
+        }
+
+        function guardarVenta() {
+            var fechaActual = new Date();
+
+            // Obtener el año, mes y día por separado
+            var año = fechaActual.getFullYear();
+            var mes = fechaActual.getMonth() + 1; // El mes empieza en 0, por eso se suma 1
+            var dia = fechaActual.getDate();
+            
+            // Formatear la fecha como YYYY-MM-DD (por ejemplo: 2024-04-14)
+            var fechaFormateada = año + '-' + (mes < 10 ? '0' + mes : mes) + '-' + (dia < 10 ? '0' + dia : dia);
+            
+            var cliente = document.getElementById('cliente').value;
+            var venta = {
+                idCliente:   cliente ,
+                detalleVenta: detalleVenta
+            };
+console.log(venta)
+            fetch('/venta/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(venta)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Venta realizada exitosamente');
+                    window.location.href = '/venta/all'; // Redirigir a la lista de ventas
+                } else {
+                    console.error('Error al guardar venta');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+            });
+        }
+    </script>
+</body>
+</html>
